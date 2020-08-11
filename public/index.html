@@ -1,0 +1,48 @@
+
+
+<html>
+	<head>
+		<link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css" />
+
+		<script src="https://www.google.com/recaptcha/api.js?render=6LfXfL0ZAAAAAPQqo839aeWWJtst6F18U3Uk58H8"></script>
+	</head>
+	<body>
+		<h1>ReCAPTCHA V3 Demo</h1>
+		<input type="text"/>
+		<button type="button" onclick="onClick()">Submit</button>
+		<br>
+		<h2>Results</h2>
+		<div id="results"></div>
+
+		<script>
+			function addResult(text) {
+				const container = document.getElementById("results")
+				const pre = document.createElement("pre")
+				pre.innerText = text
+				container.appendChild(pre)
+			}
+
+			function sendToken(token){
+				fetch(`/v3-verify?token=${token}`)
+					.then(response => response.json())
+					.then(data => {
+						addResult('Success: ' + JSON.stringify(data, null, '\t'))
+					})
+					.catch((error) => {
+						addResult('Error:' + error);
+					});
+			}
+
+			function onClick(e) {
+				grecaptcha.ready(() => {
+					grecaptcha.execute('6LfXfL0ZAAAAAPQqo839aeWWJtst6F18U3Uk58H8', {action: 'check'})
+						.then(token => {
+							addResult("Got token " + token)
+							sendToken(token)
+							grecaptcha.reset()
+						});
+				});
+			}
+	</script>
+	</body>
+</html>
